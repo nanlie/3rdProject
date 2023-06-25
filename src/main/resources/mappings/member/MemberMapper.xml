@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="memberDAO">
+	<insert id="register" parameterType="MemberVO">
+		INSERT INTO MEMBERS (ID, PASSWORD, BIRTH, ADDRESS, NAME, HP, GENDER, EMAIL)
+		VALUES (#{id}, #{password}, #{birth}, #{address}, #{name}, #{hp}, #{gender}, #{email})
+	</insert>
+	
+	<select id="idChk" parameterType="string" resultType="string">
+		SELECT LOWER(ID) FROM MEMBERS WHERE ID = LOWER(#{id})
+	</select>
+	
+	<select id="login" parameterType="MemberVO" resultType="MemberVO">
+		SELECT * FROM MEMBERS 
+		WHERE ID = #{id}
+		AND PASSWORD = #{password} 
+	</select>
+	
+	<select id="searchIdOk" parameterType="MemberVO" resultType="string">
+		SELECT ID FROM MEMBERS WHERE EMAIL = #{email, jdbcType=VARCHAR}
+		AND NAME = #{name, jdbcType=VARCHAR}
+	</select>
+	
+	<select id="searchPwdOk" parameterType="MemberVO" resultType="MemberVO">
+		SELECT PASSWORD, EMAIL FROM MEMBERS WHERE EMAIL = #{email, jdbcType=VARCHAR}
+		AND NAME = #{name, jdbcType=VARCHAR}
+		AND ID = #{id, jdbcType=VARCHAR} 
+	</select>
+	
+	<select id="mailChk" parameterType="string" resultType="string">
+		SELECT ID FROM MEMBERS WHERE EMAIL = #{email}
+	</select>
+
+	<select id="myInf" parameterType="string" resultType="MemberVO">
+		SELECT * FROM MEMBERS WHERE ID = #{id}
+	</select>
+	
+	<update id="memberUpdate" parameterType="MemberVO">
+		UPDATE MEMBERS 
+		SET ADDRESS = #{address},
+		     HP = #{hp}
+		WHERE ID = #{id} 
+	</update>
+	
+	<delete id="memberDelete" parameterType="MemberVO">
+		DELETE FROM MEMBERS WHERE ID = #{id}
+	</delete>
+	
+	<select id="orderInfo" parameterType = "String" resultType ="MemberVO">
+		SELECT NAME,HP,EMAIL,ADDRESS FROM MEMBERS WHERE ID = #{id}
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+

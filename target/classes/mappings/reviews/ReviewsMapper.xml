@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="reviews">
+	<!-- 리뷰 전체조회 -->
+	<select id="getReviewsList" resultType="ReviewsVO">
+		SELECT R.*, U.THUMBNAIL, U.MENUID, S.NAME, M.ID, U.MENUNAME FROM REVIEWS R, MYME M, MEMBERS S, MENU U 
+		WHERE (M.MENUID = U.MENUID) AND (S.ID = M.ID) AND (R.MYNUM = M.MYNUM) ORDER BY R.WRITEDATE DESC
+	</select>
+	
+	<!-- 내 리뷰 보기 -->
+	<select id="getMyReviewList" resultType="ReviewsVO" parameterType="String">
+		SELECT R.*, U.THUMBNAIL, S.NAME, M.ID, U.MENUNAME FROM REVIEWS R, MYME M, MEMBERS S, MENU U 
+		WHERE (M.MENUID = U.MENUID) AND (S.ID = M.ID) AND (R.MYNUM = M.MYNUM) AND (M.ID = #{id}) ORDER BY R.WRITEDATE DESC
+	</select>
+	
+	<!-- 리뷰 삭제 -->
+	<delete id="delRev" parameterType="int">
+		DELETE FROM REVIEWS WHERE REVIEWNUM = #{reviewNum}
+	</delete>
+	
+	<!-- 리뷰 수정 -->
+	<update id="upRev" parameterType="ReviewsVO">
+		UPDATE REVIEWS SET COMMENTS = #{comments} , POINTS = #{points} WHERE REVIEWNUM = #{reviewNum}
+	</update>
+	
+	<!-- 리뷰 쓰기 -->
+	<insert id="insRev" parameterType="ReviewsVO">
+		INSERT INTO REVIEWS (REVIEWNUM, MYNUM, POINTS, COMMENTS, WRITEDATE)
+			 VALUES (SEQ_REV.NEXTVAL, #{myNum}, #{points}, #{comments}, to_date(sysdate))
+	</insert>
+	
+	<!-- 작성 가능 리뷰 조회 -->
+	<select id="getCanRev" resultType="ReviewsVO" parameterType="String">
+			SELECT M.MYNUM, M.DELIDATE, U.MENUNAME, U.THUMBNAIL FROM MYME M, MENU U WHERE (M.MENUID = U.MENUID) AND (DELIOK = '배송 완료') AND(ID = #{id}) ORDER BY M.DELIDATE DESC
+	</select>
+	
+	<!-- 리뷰  작성 여부 조회 -->
+	<select id="searchRev" resultType="ReviewsVO" parameterType="int">
+			SELECT REVIEWNUM FROM REVIEWS WHERE MYNUM = #{myNum}
+	</select>
+	
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mymeDAO">
+
+	
+	<select id="MyMeList" parameterType="string" resultType="com.forme.biz.myme.MyMeVO">
+		SELECT *
+		FROM MYME INNER JOIN MENU
+		ON MYME.MENUID = MENU.MENUID
+		WHERE ID = #{id}
+		ORDER BY MYME.TURN, MYME.DELIDATE 
+	</select>
+	
+	<select id="MyMeGo" parameterType="string" resultType="com.forme.biz.myme.MyMeVO">
+		SELECT *
+		FROM MYME INNER JOIN MENU
+		ON MYME.MENUID = MENU.MENUID
+		WHERE ID = #{id} AND DELIOK = '배송 미완료'
+		ORDER BY MYME.DELIDATE
+	</select>
+	
+	<update id="deliDateUpdate" parameterType="com.forme.biz.myme.MyMeVO">
+		UPDATE MYME 
+		SET DELIDATE = #{deliDate} 
+		WHERE ID = #{id} AND MYNUM = #{myNum}
+	</update>	
+	<insert id="okOrder" parameterType="hashMap">
+		INSERT INTO MYME (MYNUM , ID , MENUID, DELIADDRESS, DELIDATE, SUBPRICE, SUBTYPE, SUBDATE,STARTDATE,ENDDATE,TURN,DELIOK) 
+		 VALUES (SEQ_MYNUM.NEXTVAL,#{id},#{menuId},#{deliAddress},#{deliDate},#{subPrice},#{subType},SYSDATE,#{deliDate},null,#{turn},'배송 미완료')
+	</insert>
+	<update id="turnUpdate" parameterType = "string">
+		UPDATE MEMBERS
+		SET TURN = (SELECT MAX(TURN)+1 FROM MEMBERS)
+		WHERE ID = #{id}
+	</update>
+	<select id="getTurn" parameterType="string" resultType="int">
+		SELECT TURN FROM MEMBERS 
+		WHERE ID = #{id}
+	</select>
+	
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+

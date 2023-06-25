@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="adminDAO">
+
+	<!--================= 멤버 구간 ====================  -->
+	<select id="getMemberList" 
+					parameterType="adminMemberVO"
+					resultType="adminMemberVO">
+		SELECT * FROM MEMBERS
+		 ORDER BY NAME
+	</select>
+	
+	<select  id="getSearchMemberList"
+					parameterType="string"
+					resultType="adminMemberVO">
+		SELECT * FROM MEMBERS
+		WHERE NAME LIKE '%' || #{searchName} || '%'
+		ORDER BY NAME
+	</select>
+	
+	<select id="getMember"
+					parameterType="string"
+					resultType="adminMemberVO">
+		SELECT * FROM MEMBERS
+		  WHERE ID = #{id}
+	</select>
+	
+	<!--================= 멤버 구간 끝 ====================  -->
+	
+	<!-- ================== 메뉴구간 ===================== -->
+	
+	<select id="getMenuList"
+					parameterType="adminMenuVO"
+					resultType="adminMenuVO">
+		SELECT * FROM MENU
+		<!-- WHERE 1 = 1
+		<if  test='searchCondition == "MENUNAME" and searchKeyword != "" '>
+			AND MENUNAME LIKE '%' || #{searchKeyword} || '%'
+		</if> -->
+		ORDER BY MENUID DESC
+	</select>
+	
+	<select  id="getSearchMenuList"
+					parameterType="string"
+					resultType="adminMenuVO">
+		SELECT * FROM MENU
+		WHERE MENUNAME LIKE '%' || #{searchKeyword} || '%'
+	</select>
+	
+	<select id="getMenu"
+					parameterType="int"
+					resultType="adminMenuVO">
+	SELECT * FROM MENU
+	WHERE MENUID = #{menuId}
+	</select>
+	
+	
+	<insert id="insertMenu"
+				   parameterType="adminMenuVO">
+	INSERT INTO MENU 
+					(MENUID, MENUNAME, MENUTYPE, SUBTYPE, CARBOHYDRATE
+					,PROTEIN, FAT, NATRIUM, CALORIES, ALLERGY
+					,AVGPOINT, THUMBNAIL, MENUIMG, RECIPE, WEIGHT
+					,MCOMMENT)
+	  VALUES ((SELECT NVL(MAX(MENUID), 0) + 1 FROM MENU), #{menuName}, #{menuType}, #{subType}, #{carbohydrate}
+	  				  ,#{protein}, #{fat}, #{natrium}, #{calories}, #{allergy}
+	  				  ,0, #{thumbnail}, #{menuImg}, #{recipe}, #{weight}, #{mComment})
+	</insert>
+
+	<update id="updateMenu"
+					 parameterType="adminMenuVO">
+	UPDATE MENU
+					SET MENUNAME = #{menuName}
+							,MENUTYPE = #{menuType}
+							,SUBTYPE = #{subType}
+							,CARBOHYDRATE = #{carbohydrate}
+							,PROTEIN = #{protein}
+							,FAT = #{fat}
+							,NATRIUM = #{natrium}
+							,CALORIES = #{calories}
+							,ALLERGY = #{allergy}
+							,THUMBNAIL = #{thumbnail}
+							,MENUIMG = #{menuImg}
+							,RECIPE = #{recipe}
+							,WEIGHT = #{weight}
+							,MCOMMENT = #{mComment}
+	WHERE MENUID = #{menuId}
+	</update>
+	
+	<delete id="deleteMenu"
+					parameterType="int">
+	DELETE FROM MENU WHERE MENUID = #{menuId}
+	</delete>
+	
+	<!-- ================== 메뉴구간 끝 ===================== -->
+	
+	<!-- ================== 주문내역 ===================== -->
+	<select id="getJsonOrderList"
+					parameterType="adminMyMeVO"
+					resultType="adminMyMeVO">
+		SELECT a.MYNUM
+					  , a.ID
+					  , b.MENUNAME AS MENUNAME
+					  , a.DELIADDRESS
+					  , TO_CHAR(a.DELIDATE, 'YYYY-MM-DD') AS DELIDATE
+      				  , a.SUBPRICE
+      				  , TO_CHAR(a.SUBDATE, 'YYYY-MM-DD') AS SUBDATE
+      				  , a.SUBTYPE
+      				  , TO_CHAR(a.STARTDATE, 'YYYY-MM-DD') AS STARTDATE
+      				  , TO_CHAR(a.ENDDATE, 'YYYY-MM-DD') AS ENDDATE
+      				  , a.TURN
+      				  , a.DELIOK
+ 		 FROM MYME a, MENU b
+ 		WHERE TO_CHAR(a.SUBDATE, 'YYYY-MM-DD') BETWEEN #{searchBeginDate} AND #{searchEndDate}
+ 			 AND a.MENUID = b.MENUID
+ 			 AND a.DELIOK LIKE '%' || #{deliOk} || '%'
+   			 AND a.DELIADDRESS LIKE '%' || #{orderKeyword} || '%'
+		ORDER BY a.MYNUM DESC
+	</select>
+	
+	<update id="updateDeliOk"
+					 parameterType="adminMyMeVO">
+		UPDATE MYME SET DELIOK = #{deliOk}
+		WHERE MYNUM = #{myNum}
+	</update>
+	
+	<!-- ================== 주문내역 끝 ===================== -->
+	
+	<!-- 매출내역 조회 -->
+	<select id="getIncomeYear"
+				   parameterType="adminMyMeVO"
+				   resultType="adminMyMeVO">
+	SELECT
+    SUM(DECODE(TO_CHAR(SUBDATE,'MM'), '01', SUBTYPE, 0)) M1
+    , SUM(DECODE(TO_CHAR(SUBDATE,'MM'), '02', SUBTYPE, 0)) M2
+    , SUM(DECODE(TO_CHAR(SUBDATE,'MM'), '03', SUBTYPE, 0)) M3
+    , SUM(DECODE(TO_CHAR(SUBDATE,'MM'), '04', SUBTYPE, 0)) M4
+    , SUM(DECODE(TO_CHAR(SUBDATE,'MM'), '05', SUBTYPE, 0)) M5
+    , SUM(DECODE(TO_CHAR(SUBDATE,'MM'), '06', SUBTYPE, 0)) M6
+    , SUM(DECODE(TO_CHAR(SUBDATE,'MM'), '07', SUBTYPE, 0)) M7
+    , SUM(DECODE(TO_CHAR(SUBDATE,'MM'), '08', SUBTYPE, 0)) M8
+    , SUM(DECODE(TO_CHAR(SUBDATE,'MM'), '09', SUBTYPE, 0)) M9
+    , SUM(DECODE(TO_CHAR(SUBDATE,'MM'), '10', SUBTYPE, 0)) M10
+    , SUM(DECODE(TO_CHAR(SUBDATE,'MM'), '11', SUBTYPE, 0)) M11
+    , SUM(DECODE(TO_CHAR(SUBDATE,'MM'), '12', SUBTYPE, 0)) M12
+    , SUM(SUBTYPE) TOTAL
+ 	FROM MYME
+ 	WHERE TO_CHAR(SUBDATE, 'YYYY') = #{incomeYear}
+	</select>
+	
+	<select id="getIncomeMonth"
+					parameterType="string"
+					resultType="adminMyMeVO">
+					
+SELECT a.MENUID, b.MENUNAME AS MENUNAME
+			, SUM(a.SUBTYPE) SUBTYPE
+	FROM MYME a, MENU b
+  WHERE TO_CHAR(a.SUBDATE, 'YYYY-MM') = #{yearMonth}
+  		AND a.MENUID = b.MENUID
+  GROUP BY a.MENUID, b.MENUNAME
+  ORDER BY a.MENUID
+	</select>
+	
+	<!-- 매출내역 조회 끝 -->
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+

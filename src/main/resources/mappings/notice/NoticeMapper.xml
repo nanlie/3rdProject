@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="notice">
+	<!-- 공지 전체조회 -->
+	<select id="getNoticeList" resultType="NoticeVO">
+		SELECT N.*, M.NAME FROM NOTICE N, MEMBERS M WHERE M.ID = N.ID ORDER BY N.NOTIDATE DESC
+	</select>
+	
+	<!-- 공지 검색조회 -->
+	<select id="searchNoticeList" parameterType="string" resultType="NoticeVO">
+		SELECT N.*, M.NAME FROM NOTICE N, MEMBERS M WHERE (M.ID = N.ID) AND (NOTICETITLE LIKE '%'|| #{searchKeyword} ||'%')
+		ORDER BY N.NOTIDATE DESC
+	</select>
+	
+	<!-- 공지 한개조회 -->
+	<select id="getNoticeOne" parameterType="int" resultType="NoticeVO">
+		SELECT N.*, M.NAME FROM NOTICE N, MEMBERS M WHERE (M.ID = N.ID) AND (NOTICENUM = #{noticeNum})
+	</select>
+	
+	<!-- 공지 쓰기 -->
+	<insert id="insertNotice" parameterType="NoticeVO">
+		INSERT INTO NOTICE (NOTICENUM, ID, NOTICONTENT, NOTICETITLE, NOTIDATE)
+			 VALUES (SEQ_NOT.NEXTVAL, 'admin', #{notiContent}, #{noticeTitle}, to_date(sysdate))
+	</insert>
+	
+	<!-- 공지 수정 -->
+	<update id="updateNotice" parameterType="NoticeVO">
+		UPDATE NOTICE SET NOTICONTENT = #{notiContent} , NOTICETITLE = #{noticeTitle}, NOTIDATE = to_date(sysdate) WHERE NOTICENUM = #{noticeNum}
+	</update>
+	
+	<!-- 공지 삭제 -->
+	<delete id="deleteNotice" parameterType="NoticeVO">
+		DELETE FROM NOTICE WHERE NOTICENUM = #{noticeNum}
+	</delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+

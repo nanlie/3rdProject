@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+	<typeAliases>
+		<typeAlias type="com.forme.biz.member.MemberVO" alias="memberVO"/>
+		<typeAlias type="com.forme.biz.notice.NoticeVO" alias="NoticeVO"/>
+		<typeAlias type="com.forme.biz.reviews.ReviewsVO" alias="ReviewsVO"/>
+		<typeAlias type="com.forme.biz.menu.MenuVO" alias="MenuVO"/>
+		<typeAlias type="com.forme.biz.admin.AdminMenuVO" alias="adminMenuVO"/>
+		<typeAlias type="com.forme.biz.admin.AdminMemberVO" alias="adminMemberVO"/>
+		<typeAlias type="com.forme.biz.admin.AdminMyMeVO" alias="adminMyMeVO"/>
+	</typeAliases>
+	
+
+<!-- applicationContext.xml 에서 dataSource 설정 사용으로 대체
+  <environments default="development">
+    <environment id="development">
+      <transactionManager type="JDBC"/>
+      <dataSource type="POOLED">
+        <property name="driver" value="oracle.jdbc.OracleDriver"/>
+        <property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+        <property name="username" value="forme"/>
+        <property name="password" value="formepw"/>
+      </dataSource>
+    </environment>
+  </environments>
+-->
+
+<!--  applicationContext.xml 에서 mapperLocations 설정으로 대체
+  <mappers>
+    <mapper resource="mappings/board/BoardMapper.xml"/>
+    <mapper resource="mappings/user/UserMapper.xml"/>
+  </mappers>
+--> 
+  
+</configuration>
